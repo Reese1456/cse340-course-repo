@@ -64,3 +64,75 @@ VALUES
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Neighborhood Cleanup Day', 'Pick up litter and clear overgrown lots along the Main Street corridor.', 'Main Street Corridor, Rexburg, ID', '2026-09-19'),
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Animal Shelter Support Day', 'Walk dogs, clean kennels, and help with adoption events at the county shelter.', 'Madison County Animal Shelter, Rexburg, ID', '2026-10-24'),
 ((SELECT organization_id FROM organization WHERE name = 'UnityServe Volunteers'), 'Holiday Gift Wrapping', 'Wrap and deliver donated gifts for children in local foster care.', 'Rexburg Community Center, Rexburg, ID', '2026-12-05');
+
+-- ========================================
+-- Category Table
+-- ========================================
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT NOT NULL
+);
+
+-- ========================================
+-- Project/Category Join Table
+-- ========================================
+-- A project can fall under several categories, and a category covers many
+-- projects, so this is a many-to-many relationship. It cannot be modeled with a
+-- foreign key on either table alone: putting category_id on project would cap
+-- each project at one category. Instead this join table holds one row per
+-- project/category pairing.
+--
+-- The composite primary key (project_id, category_id) means the same pairing
+-- cannot be inserted twice, and each column is also a foreign key so a pairing
+-- can never reference a project or category that does not exist.
+CREATE TABLE project_category (
+    project_id INT NOT NULL REFERENCES project (project_id) ON DELETE CASCADE,
+    category_id INT NOT NULL REFERENCES category (category_id) ON DELETE CASCADE,
+    PRIMARY KEY (project_id, category_id)
+);
+
+-- ========================================
+-- Insert sample data: Categories
+-- ========================================
+INSERT INTO category (name, description)
+VALUES
+('Environmental', 'Projects that protect, restore, or care for the natural world around us.'),
+('Educational', 'Projects that teach skills and support students and lifelong learners.'),
+('Community Service', 'Projects that meet immediate needs for neighbors and local families.'),
+('Health and Wellness', 'Projects that support physical health, nutrition, and accessibility.'),
+('Construction and Housing', 'Hands-on building and repair projects that improve shared spaces and homes.');
+
+-- ========================================
+-- Insert sample data: Project/Category pairings
+-- ========================================
+-- Rows are matched by title and name rather than hardcoded ids, for the same
+-- reason as the project inserts above.
+INSERT INTO project_category (project_id, category_id)
+VALUES
+((SELECT project_id FROM project WHERE title = 'Riverside Park Playground Build'), (SELECT category_id FROM category WHERE name = 'Construction and Housing')),
+((SELECT project_id FROM project WHERE title = 'Riverside Park Playground Build'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Senior Center Ramp Installation'), (SELECT category_id FROM category WHERE name = 'Construction and Housing')),
+((SELECT project_id FROM project WHERE title = 'Senior Center Ramp Installation'), (SELECT category_id FROM category WHERE name = 'Health and Wellness')),
+((SELECT project_id FROM project WHERE title = 'Habitat Home Framing Day'), (SELECT category_id FROM category WHERE name = 'Construction and Housing')),
+((SELECT project_id FROM project WHERE title = 'Habitat Home Framing Day'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Library Roof Repair'), (SELECT category_id FROM category WHERE name = 'Construction and Housing')),
+((SELECT project_id FROM project WHERE title = 'Library Roof Repair'), (SELECT category_id FROM category WHERE name = 'Educational')),
+((SELECT project_id FROM project WHERE title = 'Winter Shelter Weatherproofing'), (SELECT category_id FROM category WHERE name = 'Construction and Housing')),
+((SELECT project_id FROM project WHERE title = 'Winter Shelter Weatherproofing'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Community Garden Planting'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'Community Garden Planting'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'School Greenhouse Setup'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'School Greenhouse Setup'), (SELECT category_id FROM category WHERE name = 'Educational')),
+((SELECT project_id FROM project WHERE title = 'Fall Harvest Festival'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'Fall Harvest Festival'), (SELECT category_id FROM category WHERE name = 'Health and Wellness')),
+((SELECT project_id FROM project WHERE title = 'Composting Workshop'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'Composting Workshop'), (SELECT category_id FROM category WHERE name = 'Educational')),
+((SELECT project_id FROM project WHERE title = 'Orchard Tree Pruning'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'Thanksgiving Food Drive'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Thanksgiving Food Drive'), (SELECT category_id FROM category WHERE name = 'Health and Wellness')),
+((SELECT project_id FROM project WHERE title = 'After-School Tutoring Launch'), (SELECT category_id FROM category WHERE name = 'Educational')),
+((SELECT project_id FROM project WHERE title = 'Neighborhood Cleanup Day'), (SELECT category_id FROM category WHERE name = 'Environmental')),
+((SELECT project_id FROM project WHERE title = 'Neighborhood Cleanup Day'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Animal Shelter Support Day'), (SELECT category_id FROM category WHERE name = 'Community Service')),
+((SELECT project_id FROM project WHERE title = 'Holiday Gift Wrapping'), (SELECT category_id FROM category WHERE name = 'Community Service'));

@@ -154,13 +154,31 @@ p {
 }
 
 .category-list li {
+  display: flex;
+  flex-direction: column;
   background-color: var(--color-surface);
   padding: 1.25rem;
   border-radius: 8px;
-  text-align: center;
-  font-weight: 600;
-  color: var(--color-primary-dark);
+  color: var(--color-text);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.category-list h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: var(--color-primary-dark);
+}
+
+.category-list p {
+  margin: 0;
+}
+
+.category-count {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 footer {

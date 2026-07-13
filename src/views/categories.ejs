@@ -2,11 +2,17 @@
 
 <main>
     <h1><%= title %></h1>
+    <p>Every service project is tagged with one or more of these categories.</p>
     <ul class="category-list">
-        <li>Environmental</li>
-        <li>Educational</li>
-        <li>Community Service</li>
-        <li>Health and Wellness</li>
+        <% categories.forEach(category => { %>
+            <li>
+                <h2><%= category.name %></h2>
+                <p><%= category.description %></p>
+                <p class="category-count">
+                    <%= category.project_count %> <%= category.project_count === 1 ? 'project' : 'projects' %>
+                </p>
+            </li>
+        <% }); %>
     </ul>
 </main>
 
