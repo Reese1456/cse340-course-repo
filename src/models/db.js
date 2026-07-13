@@ -13,7 +13,12 @@ import { Pool } from 'pg';
  */
 const pool = new Pool({
   connectionString: process.env.DB_URL,
-  ssl: true,
+  // Render's PostgreSQL presents a self-signed certificate, so plain `ssl: true`
+  // fails with DEPTH_ZERO_SELF_SIGNED_CERT. We keep SSL on but stop Node from
+  // rejecting the self-signed cert.
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 /**
