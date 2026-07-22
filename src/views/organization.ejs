@@ -1,0 +1,32 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= organization.name %></h1>
+    <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
+    <p><%= organization.description %></p>
+    <p>Contact: <a href="mailto:<%= organization.contact_email %>"><%= organization.contact_email %></a></p>
+
+    <h2>Service Projects</h2>
+    <% if (projects.length > 0) { %>
+        <ul class="project-list">
+            <% projects.forEach(project => { %>
+                <li>
+                    <p class="project-headline">
+                        <span class="project-date">
+                            <%= project.project_date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>:
+                        </span>
+                        <strong><%= project.title %></strong>
+                    </p>
+                    <p class="project-location"><%= project.location %></p>
+                    <p><%= project.description %></p>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>This organization has no service projects listed yet.</p>
+    <% } %>
+
+    <p><a href="/organizations">&larr; Back to all organizations</a></p>
+</main>
+
+<%- include('partials/footer') %>

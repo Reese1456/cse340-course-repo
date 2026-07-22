@@ -2,9 +2,8 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { testConnection } from './src/models/db.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
-import { getAllCategories } from './src/models/categories.js';
+import router from './src/routes.js';
+import { handleErrors } from './src/controllers/errors.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,30 +18,25 @@ app.set('views', path.join(__dirname, 'src/views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-  res.render('home', { title: 'CSE 340 Service Network' });
+// Log every request during development
+app.use((req, res, next) => {
+  if (nodeEnv === 'development') {
+    console.log(`${req.method} ${req.url}`);
+  }
+  next();
 });
 
-app.get('/organizations', async (req, res) => {
-  const organizations = await getAllOrganizations();
-  const title = 'Our Partner Organizations';
-
-  res.render('organizations', { title, organizations });
+// Make NODE_ENV available to all views
+app.use((req, res, next) => {
+  res.locals.NODE_ENV = nodeEnv;
+  next();
 });
 
-app.get('/projects', async (req, res) => {
-  const projects = await getAllProjects();
-  const title = 'Service Projects';
+// All application routes
+app.use(router);
 
-  res.render('projects', { title, projects });
-});
-
-app.get('/categories', async (req, res) => {
-  const categories = await getAllCategories();
-  const title = 'Service Project Categories';
-
-  res.render('categories', { title, categories });
-});
+// Global error handler (must come after the routes)
+app.use(handleErrors);
 
 app.listen(port, async () => {
   try {
