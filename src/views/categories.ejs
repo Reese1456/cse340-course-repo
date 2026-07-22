@@ -6,7 +6,7 @@
     <ul class="category-list">
         <% categories.forEach(category => { %>
             <li>
-                <h2><%= category.name %></h2>
+                <h2><a href="/category/<%= category.category_id %>"><%= category.name %></a></h2>
                 <p><%= category.description %></p>
                 <p class="category-count">
                     <%= category.project_count %> <%= category.project_count === 1 ? 'project' : 'projects' %>

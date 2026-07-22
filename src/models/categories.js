@@ -29,4 +29,77 @@ const getAllCategories = async () => {
   return result.rows;
 };
 
-export { getAllCategories };
+/**
+ * Retrieves a single category by its id.
+ *
+ * The id comes from the URL, so it is passed as a parameterized value ($1) to
+ * guard against SQL injection.
+ *
+ * Returns the category row, or undefined if no category has that id.
+ */
+const getCategoryDetails = async (categoryId) => {
+  const query = `
+    SELECT category_id, name, description
+    FROM public.category
+    WHERE category_id = $1;
+  `;
+
+  const result = await db.query(query, [categoryId]);
+
+  return result.rows[0];
+};
+
+/**
+ * Retrieves all service projects that belong to a given category.
+ *
+ * Projects are linked to categories through the project_category join table, so
+ * the query joins through it. The organization name is pulled in for display,
+ * and results are ordered by date.
+ */
+const getProjectsByCategoryId = async (categoryId) => {
+  const query = `
+    SELECT
+      p.project_id,
+      p.title,
+      p.location,
+      p.project_date,
+      o.organization_id,
+      o.name AS organization_name
+    FROM public.project p
+    JOIN public.project_category pc ON pc.project_id = p.project_id
+    JOIN public.organization o ON o.organization_id = p.organization_id
+    WHERE pc.category_id = $1
+    ORDER BY p.project_date;
+  `;
+
+  const result = await db.query(query, [categoryId]);
+
+  return result.rows;
+};
+
+/**
+ * Retrieves all categories that a given project is tagged with.
+ *
+ * This is the other direction of the many-to-many relationship, used to show
+ * category tags on the project details page.
+ */
+const getCategoriesByProjectId = async (projectId) => {
+  const query = `
+    SELECT c.category_id, c.name
+    FROM public.category c
+    JOIN public.project_category pc ON pc.category_id = c.category_id
+    WHERE pc.project_id = $1
+    ORDER BY c.name;
+  `;
+
+  const result = await db.query(query, [projectId]);
+
+  return result.rows;
+};
+
+export {
+  getAllCategories,
+  getCategoryDetails,
+  getProjectsByCategoryId,
+  getCategoriesByProjectId,
+};

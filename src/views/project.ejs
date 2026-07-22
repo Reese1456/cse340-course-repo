@@ -12,6 +12,14 @@
         <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
     </p>
 
+    <% if (categories.length > 0) { %>
+        <ul class="category-tags">
+            <% categories.forEach(category => { %>
+                <li><a href="/category/<%= category.category_id %>"><%= category.name %></a></li>
+            <% }); %>
+        </ul>
+    <% } %>
+
     <p><a href="/projects">&larr; Back to all projects</a></p>
 </main>
 
