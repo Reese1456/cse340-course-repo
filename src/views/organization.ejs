@@ -15,7 +15,7 @@
                         <span class="project-date">
                             <%= project.project_date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>:
                         </span>
-                        <strong><%= project.title %></strong>
+                        <strong><a href="/project/<%= project.project_id %>"><%= project.title %></a></strong>
                     </p>
                     <p class="project-location"><%= project.location %></p>
                     <p><%= project.description %></p>
