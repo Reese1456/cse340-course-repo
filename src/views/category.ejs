@@ -3,6 +3,9 @@
 <main>
     <h1><%= category.name %></h1>
     <p><%= category.description %></p>
+    <p class="page-actions">
+        <a class="button-link secondary" href="/edit-category/<%= category.category_id %>">Edit Category</a>
+    </p>
 
     <h2>Service Projects</h2>
     <% if (projects.length > 0) { %>

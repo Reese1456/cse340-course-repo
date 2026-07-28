@@ -56,4 +56,66 @@ const getProjectsByOrganizationId = async (organizationId) => {
   return result.rows;
 };
 
-export { getAllOrganizations, getOrganizationDetails, getProjectsByOrganizationId };
+/**
+ * Creates an organization and returns its generated id.
+ */
+const createOrganization = async (name, description, contactEmail, logoFilename) => {
+  const query = `
+    INSERT INTO public.organization (name, description, contact_email, logo_filename)
+    VALUES ($1, $2, $3, $4)
+    RETURNING organization_id;
+  `;
+
+  const result = await db.query(query, [name, description, contactEmail, logoFilename]);
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to create organization');
+  }
+
+  return result.rows[0].organization_id;
+};
+
+/**
+ * Updates an organization and returns its id.
+ */
+const updateOrganization = async (
+  organizationId,
+  name,
+  description,
+  contactEmail,
+  logoFilename,
+) => {
+  const query = `
+    UPDATE public.organization
+    SET name = $1,
+        description = $2,
+        contact_email = $3,
+        logo_filename = $4
+    WHERE organization_id = $5
+    RETURNING organization_id;
+  `;
+
+  const result = await db.query(query, [
+    name,
+    description,
+    contactEmail,
+    logoFilename,
+    organizationId,
+  ]);
+
+  if (result.rows.length === 0) {
+    const error = new Error('Organization not found');
+    error.status = 404;
+    throw error;
+  }
+
+  return result.rows[0].organization_id;
+};
+
+export {
+  getAllOrganizations,
+  getOrganizationDetails,
+  getProjectsByOrganizationId,
+  createOrganization,
+  updateOrganization,
+};

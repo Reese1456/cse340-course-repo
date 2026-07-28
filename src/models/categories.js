@@ -1,4 +1,4 @@
-import db from './db.js';
+import db, { withTransaction } from './db.js';
 
 /**
  * Retrieves all service project categories, along with how many projects fall
@@ -97,9 +97,126 @@ const getCategoriesByProjectId = async (projectId) => {
   return result.rows;
 };
 
+/**
+ * Creates a category. The Week 4 form only asks for a name, so a useful default
+ * description is generated to satisfy the existing database schema.
+ */
+const createCategory = async (name) => {
+  const description = `Service projects in the ${name} category.`;
+  const query = `
+    INSERT INTO public.category (name, description)
+    VALUES ($1, $2)
+    RETURNING category_id;
+  `;
+
+  const result = await db.query(query, [name, description]);
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to create category');
+  }
+
+  return result.rows[0].category_id;
+};
+
+/**
+ * Updates the editable category name while preserving its description.
+ */
+const updateCategory = async (categoryId, name) => {
+  const query = `
+    UPDATE public.category
+    SET description = CASE
+          WHEN description = 'Service projects in the ' || name || ' category.'
+            THEN 'Service projects in the ' || $1 || ' category.'
+          ELSE description
+        END,
+        name = $1
+    WHERE category_id = $2
+    RETURNING category_id;
+  `;
+
+  const result = await db.query(query, [name, categoryId]);
+
+  if (result.rows.length === 0) {
+    const error = new Error('Category not found');
+    error.status = 404;
+    throw error;
+  }
+
+  return result.rows[0].category_id;
+};
+
+const assignCategoryToProject = async (categoryId, projectId, queryable = db) => {
+  const query = `
+    INSERT INTO public.project_category (category_id, project_id)
+    VALUES ($1, $2);
+  `;
+
+  await queryable.query(query, [categoryId, projectId]);
+};
+
+/**
+ * Replaces all category assignments for a project with the requested set.
+ */
+const updateCategoryAssignments = async (projectId, categoryIds) => {
+  const normalizedProjectId = Number(projectId);
+  const uniqueCategoryIds = [...new Set(categoryIds.map(Number))];
+
+  if (
+    !Number.isInteger(normalizedProjectId)
+    || normalizedProjectId < 1
+    || uniqueCategoryIds.some((id) => !Number.isInteger(id) || id < 1)
+  ) {
+    const error = new Error('Invalid project or category id');
+    error.status = 400;
+    throw error;
+  }
+
+  await withTransaction(async (client) => {
+    const projectResult = await client.query(
+      'SELECT project_id FROM public.project WHERE project_id = $1;',
+      [normalizedProjectId],
+    );
+
+    if (projectResult.rows.length === 0) {
+      const error = new Error('Project not found');
+      error.status = 404;
+      throw error;
+    }
+
+    if (uniqueCategoryIds.length > 0) {
+      const categoryResult = await client.query(
+        `
+          SELECT category_id
+          FROM public.category
+          WHERE category_id = ANY($1::int[]);
+        `,
+        [uniqueCategoryIds],
+      );
+
+      if (categoryResult.rows.length !== uniqueCategoryIds.length) {
+        const error = new Error('One or more categories were not found');
+        error.status = 400;
+        throw error;
+      }
+    }
+
+    await client.query(
+      'DELETE FROM public.project_category WHERE project_id = $1;',
+      [normalizedProjectId],
+    );
+
+    for (const categoryId of uniqueCategoryIds) {
+      await assignCategoryToProject(categoryId, normalizedProjectId, client);
+    }
+  });
+};
+
 export {
   getAllCategories,
   getCategoryDetails,
   getProjectsByCategoryId,
   getCategoriesByProjectId,
+  createCategory,
+  updateCategory,
+  updateCategoryAssignments,
 };

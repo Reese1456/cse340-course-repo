@@ -181,6 +181,151 @@ p {
   font-weight: 600;
 }
 
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.button-link,
+button {
+  display: inline-block;
+  border: 2px solid var(--color-primary);
+  border-radius: 6px;
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-link:hover,
+.button-link:focus,
+button:hover,
+button:focus {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.button-link.secondary {
+  background-color: transparent;
+  color: var(--color-primary-dark);
+}
+
+.button-link.secondary:hover,
+.button-link.secondary:focus {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+form {
+  max-width: 680px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.15rem;
+}
+
+.form-group label,
+fieldset legend {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #8b9693;
+  border-radius: 4px;
+  background-color: #fff;
+  color: var(--color-text);
+  padding: 0.65rem 0.75rem;
+  font: inherit;
+}
+
+textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid rgba(232, 163, 61, 0.35);
+  border-color: var(--color-primary);
+}
+
+.checkbox-group {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0 0 1.25rem;
+  padding: 1rem;
+  border: 1px solid #aab3b0;
+  border-radius: 6px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.checkbox-option input {
+  width: auto;
+}
+
+.checkbox-option label {
+  margin: 0;
+}
+
+.alert {
+  max-width: var(--max-width);
+  margin: 1rem auto 0;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+
+.alert p {
+  margin: 0;
+  color: inherit;
+}
+
+.alert.success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #8fc99c;
+}
+
+.alert.error {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #df9ca3;
+}
+
+.alert.warning {
+  color: #694f00;
+  background-color: #fff3cd;
+  border-color: #dfc97f;
+}
+
+.alert.info {
+  color: #0c5460;
+  background-color: #d1ecf1;
+  border-color: #89c4ce;
+}
+
 footer {
   text-align: center;
   padding: 1.5rem;

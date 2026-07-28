@@ -80,6 +80,7 @@ const getProjectDetails = async (id) => {
       p.description,
       p.location,
       p.project_date,
+      TO_CHAR(p.project_date, 'YYYY-MM-DD') AS project_date_input,
       o.organization_id,
       o.name AS organization_name
     FROM public.project p
@@ -92,4 +93,76 @@ const getProjectDetails = async (id) => {
   return result.rows[0];
 };
 
-export { getAllProjects, getUpcomingProjects, getProjectDetails };
+/**
+ * Creates a service project and returns its generated id.
+ */
+const createProject = async (title, description, location, date, organizationId) => {
+  const query = `
+    INSERT INTO public.project
+      (title, description, location, project_date, organization_id)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING project_id;
+  `;
+
+  const result = await db.query(query, [
+    title,
+    description,
+    location,
+    date,
+    organizationId,
+  ]);
+
+  if (result.rows.length === 0) {
+    throw new Error('Failed to create project');
+  }
+
+  return result.rows[0].project_id;
+};
+
+/**
+ * Updates a service project and returns its id.
+ */
+const updateProject = async (
+  projectId,
+  title,
+  description,
+  location,
+  date,
+  organizationId,
+) => {
+  const query = `
+    UPDATE public.project
+    SET title = $1,
+        description = $2,
+        location = $3,
+        project_date = $4,
+        organization_id = $5
+    WHERE project_id = $6
+    RETURNING project_id;
+  `;
+
+  const result = await db.query(query, [
+    title,
+    description,
+    location,
+    date,
+    organizationId,
+    projectId,
+  ]);
+
+  if (result.rows.length === 0) {
+    const error = new Error('Project not found');
+    error.status = 404;
+    throw error;
+  }
+
+  return result.rows[0].project_id;
+};
+
+export {
+  getAllProjects,
+  getUpcomingProjects,
+  getProjectDetails,
+  createProject,
+  updateProject,
+};

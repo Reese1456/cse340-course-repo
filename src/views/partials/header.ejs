@@ -18,3 +18,14 @@
             </ul>
         </nav>
     </header>
+
+    <% const messages = flash(); %>
+    <% Object.keys(messages).forEach(type => { %>
+        <% if (messages[type].length > 0) { %>
+            <div class="alert <%= type %>" role="alert" aria-live="polite">
+                <% messages[type].forEach(message => { %>
+                    <p><%= message %></p>
+                <% }); %>
+            </div>
+        <% } %>
+    <% }); %>
