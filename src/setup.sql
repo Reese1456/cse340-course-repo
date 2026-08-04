@@ -136,3 +136,40 @@ VALUES
 ((SELECT project_id FROM project WHERE title = 'Neighborhood Cleanup Day'), (SELECT category_id FROM category WHERE name = 'Community Service')),
 ((SELECT project_id FROM project WHERE title = 'Animal Shelter Support Day'), (SELECT category_id FROM category WHERE name = 'Community Service')),
 ((SELECT project_id FROM project WHERE title = 'Holiday Gift Wrapping'), (SELECT category_id FROM category WHERE name = 'Community Service'));
+
+-- ========================================
+-- Roles Table
+-- ========================================
+-- Roles are stored in their own table rather than as a plain text column on
+-- users. That way the set of valid roles is defined in one place, and a user
+-- row can never name a role that does not exist.
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+-- ========================================
+-- Insert sample data: Roles
+-- ========================================
+INSERT INTO roles (role_name, role_description)
+VALUES
+('user', 'Standard user with basic access'),
+('admin', 'Administrator with full system access');
+
+-- ========================================
+-- Users Table
+-- ========================================
+-- password_hash holds a bcrypt hash, never the password itself. Hashing is a
+-- one-way operation, so even someone with full read access to this table cannot
+-- recover the original passwords.
+--
+-- email is UNIQUE because it doubles as the username used to log in.
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles (role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

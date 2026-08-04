@@ -50,8 +50,12 @@ app.use((req, res, next) => {
   next();
 });
 
-// Make NODE_ENV available to all views
+// Make NODE_ENV and the current login state available to all views.
+// These are set on every request, including for logged-out visitors, so views
+// can reference them without guarding for undefined.
 app.use((req, res, next) => {
+  res.locals.isLoggedIn = Boolean(req.session && req.session.user);
+  res.locals.user = req.session?.user || null;
   res.locals.NODE_ENV = nodeEnv;
   next();
 });

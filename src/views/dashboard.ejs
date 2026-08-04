@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+    <p>Welcome back, <%= name %>.</p>
+
+    <p>Name: <%= name %></p>
+    <p>Username: <%= email %></p>
+
+    <% if (user && user.role_name === 'admin') { %>
+        <p class="page-actions"><a class="button-link" href="/users">Manage Registered Users</a></p>
+    <% } %>
+</main>
+
+<%- include('partials/footer') %>

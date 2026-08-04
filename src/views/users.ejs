@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+    <p>Every account currently registered on the site, and the role it has been given.</p>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Email (Username)</th>
+                <th scope="col">Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.role_name %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <p class="page-actions"><a class="button-link secondary" href="/dashboard">Back to Dashboard</a></p>
+</main>
+
+<%- include('partials/footer') %>

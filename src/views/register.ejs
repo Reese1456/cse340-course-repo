@@ -1,0 +1,29 @@
+<%- include('partials/header') %>
+
+<main>
+    <h1><%= title %></h1>
+    <p>Create an account to keep track of the service projects you care about.</p>
+
+    <form action="/register" method="POST">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" maxlength="100" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email (Username)</label>
+            <input type="email" id="email" name="email" maxlength="100" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" minlength="6" required>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p class="page-actions">Already have an account? <a href="/login">Log in</a>.</p>
+</main>
+
+<%- include('partials/footer') %>
