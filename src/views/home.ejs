@@ -1,14 +1,22 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
-    <h2>Welcome to the CSE 340 Service Network!</h2>
-    <p>Our mission is to promote service across the world by connecting volunteers with service opportunities in their community.</p>
-    <img class="main-logo" src="/images/cse340-service-network.png" alt="CSE 340 Service Network Logo">
+    <section class="hero">
+        <h1><%= title %></h1>
+        <h2 class="hero-tagline">Welcome to the CSE 340 Service Network!</h2>
+        <p class="hero-text">Our mission is to promote service across the world by connecting volunteers with service opportunities in their community.</p>
 
-    <% if (isLoggedIn) { %>
-        <p><a href="/dashboard">My Dashboard</a></p>
-    <% } %>
+        <p class="page-actions">
+            <a class="button-link" href="/projects">Browse Service Projects</a>
+            <% if (isLoggedIn) { %>
+                <a class="button-link secondary" href="/dashboard">My Dashboard</a>
+            <% } else { %>
+                <a class="button-link secondary" href="/register">Create an Account</a>
+            <% } %>
+        </p>
+    </section>
+
+    <img class="main-logo" src="/images/cse340-service-network.png" alt="CSE 340 Service Network Logo">
 </main>
 
 <%- include('partials/footer') %>

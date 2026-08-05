@@ -77,6 +77,19 @@ p {
   color: var(--color-text);
 }
 
+/* Links sit flush with the text at rest and reveal an underline on hover or
+   keyboard focus, so they stay identifiable without relying on colour alone. */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
 .main-logo {
   max-width: 100%;
   height: auto;
@@ -235,6 +248,8 @@ button:hover,
 button:focus {
   background-color: var(--color-primary-dark);
   border-color: var(--color-primary-dark);
+  color: #fff;
+  text-decoration: none;
 }
 
 .button-link.secondary {
@@ -568,6 +583,64 @@ select:focus {
 
 .back-link {
   margin-top: 1.75rem;
+}
+
+.back-link a {
+  color: var(--color-muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.back-link a:hover,
+.back-link a:focus {
+  color: var(--color-primary-dark);
+}
+
+/* Sentence beneath a form, e.g. "Need an account? Register." */
+.form-footnote {
+  margin-top: 1.15rem;
+  color: var(--color-muted);
+}
+
+.hero {
+  padding: 2rem;
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.hero h1 {
+  margin-bottom: 0.4rem;
+}
+
+.hero-tagline {
+  margin: 0 0 0.75rem;
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.hero-text {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.org-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 0.75rem;
+}
+
+.error-page {
+  padding: 2.5rem 1.5rem;
+  border-radius: 8px;
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.error-page .page-actions {
+  justify-content: center;
 }
 
 .checkbox-group {
