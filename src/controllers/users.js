@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
 import { createUser, authenticateUser, getAllUsers } from '../models/users.js';
+import { getVolunteeredProjectsByUserId } from '../models/volunteers.js';
 
 // How many times bcrypt runs its hashing algorithm. Higher is more secure but
 // slower; 10 is the usual balance for a web application.
@@ -183,13 +184,15 @@ const processLogout = (req, res) => {
   res.redirect('/login');
 };
 
-const showDashboard = (req, res) => {
+const showDashboard = async (req, res) => {
   const user = req.session.user;
+  const volunteeredProjects = await getVolunteeredProjectsByUserId(user.user_id);
 
   res.render('dashboard', {
     title: 'Dashboard',
     name: user.name,
     email: user.email,
+    volunteeredProjects,
   });
 };
 

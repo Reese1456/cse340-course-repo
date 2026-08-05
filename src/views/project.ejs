@@ -1,24 +1,57 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= project.title %></h1>
-    <p class="project-date">
-        <%= project.project_date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
-    </p>
-    <p class="project-location"><%= project.location %></p>
-    <p><%= project.description %></p>
-    <p>
-        Sponsored by
-        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
-    </p>
-
-    <% if (categories.length > 0) { %>
-        <ul class="category-tags">
-            <% categories.forEach(category => { %>
-                <li><a href="/category/<%= category.category_id %>"><%= category.name %></a></li>
-            <% }); %>
+    <div class="project-intro">
+        <h1><%= project.title %></h1>
+        <ul class="project-meta">
+            <li class="meta-date">
+                <%= project.project_date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+            </li>
+            <li class="meta-location"><%= project.location %></li>
+            <li>
+                Sponsored by
+                <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+            </li>
         </ul>
+    </div>
+
+    <% if (isLoggedIn) { %>
+        <section class="volunteer-panel<%= isVolunteering ? ' is-volunteering' : '' %>">
+            <div class="volunteer-panel-text">
+                <% if (isVolunteering) { %>
+                    <p class="volunteer-panel-title">You are volunteering for this project.</p>
+                    <p class="volunteer-panel-note">This project is saved to your dashboard.</p>
+                <% } else { %>
+                    <p class="volunteer-panel-title">Want to help with this project?</p>
+                    <p class="volunteer-panel-note">Sign up and it will be added to your dashboard.</p>
+                <% } %>
+            </div>
+
+            <% if (isVolunteering) { %>
+                <form class="inline-form" action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                    <button class="button-link secondary" type="submit">Remove Volunteer Signup</button>
+                </form>
+            <% } else { %>
+                <form class="inline-form" action="/project/<%= project.project_id %>/volunteer" method="POST">
+                    <button type="submit">Volunteer for this Project</button>
+                </form>
+            <% } %>
+        </section>
     <% } %>
+
+    <section class="project-card">
+        <h2 class="card-heading">About This Project</h2>
+        <p class="project-description"><%= project.description %></p>
+
+        <% if (categories.length > 0) { %>
+            <h3 class="tag-heading">Categories</h3>
+            <ul class="category-tags">
+                <% categories.forEach(category => { %>
+                    <li><a href="/category/<%= category.category_id %>"><%= category.name %></a></li>
+                <% }); %>
+            </ul>
+        <% } %>
+    </section>
 
     <% if (user && user.role_name === 'admin') { %>
         <p class="page-actions">
@@ -26,7 +59,8 @@
             <a class="button-link secondary" href="/assign-categories/<%= project.project_id %>">Update Categories</a>
         </p>
     <% } %>
-    <p><a href="/projects">&larr; Back to all projects</a></p>
+
+    <p class="back-link"><a href="/projects">&larr; Back to all projects</a></p>
 </main>
 
 <%- include('partials/footer') %>

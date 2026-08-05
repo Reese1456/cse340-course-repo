@@ -1,15 +1,74 @@
 <%- include('partials/header') %>
 
 <main>
-    <h1><%= title %></h1>
-    <p>Welcome back, <%= name %>.</p>
+    <div class="dashboard-intro">
+        <h1><%= title %></h1>
+        <p class="dashboard-welcome">Welcome back, <%= name %>.</p>
+    </div>
 
-    <p>Name: <%= name %></p>
-    <p>Username: <%= email %></p>
+    <section class="profile-card">
+        <h2 class="card-heading">Your Account</h2>
+        <dl class="profile-details">
+            <div class="profile-field">
+                <dt>Name</dt>
+                <dd><%= name %></dd>
+            </div>
+            <div class="profile-field">
+                <dt>Username</dt>
+                <dd><%= email %></dd>
+            </div>
+            <% if (user) { %>
+                <div class="profile-field">
+                    <dt>Role</dt>
+                    <dd><span class="role-badge"><%= user.role_name %></span></dd>
+                </div>
+            <% } %>
+        </dl>
 
-    <% if (user && user.role_name === 'admin') { %>
-        <p class="page-actions"><a class="button-link" href="/users">Manage Registered Users</a></p>
-    <% } %>
+        <% if (user && user.role_name === 'admin') { %>
+            <p class="page-actions"><a class="button-link" href="/users">Manage Registered Users</a></p>
+        <% } %>
+    </section>
+
+    <section class="dashboard-section">
+        <div class="section-header">
+            <h2>Your Volunteer Commitments</h2>
+            <% if (volunteeredProjects.length > 0) { %>
+                <span class="count-badge"><%= volunteeredProjects.length %></span>
+            <% } %>
+        </div>
+
+        <% if (volunteeredProjects.length > 0) { %>
+            <ul class="volunteer-list">
+                <% volunteeredProjects.forEach(project => { %>
+                    <li class="volunteer-card">
+                        <div class="volunteer-card-body">
+                            <p class="project-date">
+                                <%= project.project_date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                            </p>
+                            <h3 class="volunteer-card-title">
+                                <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                            </h3>
+                            <p class="project-location"><%= project.location %></p>
+                            <p class="volunteer-card-org">
+                                Sponsored by
+                                <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+                            </p>
+                        </div>
+                        <form class="inline-form" action="/project/<%= project.project_id %>/unvolunteer" method="POST">
+                            <input type="hidden" name="redirectTo" value="dashboard">
+                            <button class="button-link secondary" type="submit">Remove</button>
+                        </form>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <div class="empty-state">
+                <p>You haven't signed up to volunteer for any projects yet.</p>
+                <p class="page-actions"><a class="button-link" href="/projects">Browse Service Projects</a></p>
+            </div>
+        <% } %>
+    </section>
 </main>
 
 <%- include('partials/footer') %>

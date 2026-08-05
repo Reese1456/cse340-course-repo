@@ -30,6 +30,7 @@ import {
   processAssignCategoriesForm,
   categoryValidation,
 } from './controllers/categories.js';
+import { processVolunteerSignup, processVolunteerRemoval } from './controllers/volunteers.js';
 import {
   showUserRegistrationForm,
   processUserRegistrationForm,
@@ -81,6 +82,10 @@ router.post(
 );
 router.get('/assign-categories/:projectId', requireRole('admin'), showAssignCategoriesForm);
 router.post('/assign-categories/:projectId', requireRole('admin'), processAssignCategoriesForm);
+
+// Volunteering for a project is open to any logged-in user (not just admins).
+router.post('/project/:id/volunteer', requireLogin, processVolunteerSignup);
+router.post('/project/:id/unvolunteer', requireLogin, processVolunteerRemoval);
 
 router.get('/categories', showCategoriesPage);
 router.get('/category/:id', showCategoryDetailsPage);

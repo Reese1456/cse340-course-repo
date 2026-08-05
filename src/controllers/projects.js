@@ -7,6 +7,7 @@ import {
 } from '../models/projects.js';
 import { getCategoriesByProjectId } from '../models/categories.js';
 import { getAllOrganizations } from '../models/organizations.js';
+import { isVolunteering } from '../models/volunteers.js';
 
 // How many upcoming projects to show on the projects listing page.
 const NUMBER_OF_UPCOMING_PROJECTS = 5;
@@ -75,8 +76,16 @@ const showProjectDetailsPage = async (req, res, next) => {
   }
 
   const categories = await getCategoriesByProjectId(projectId);
+  const volunteering = req.session.user
+    ? await isVolunteering(req.session.user.user_id, projectId)
+    : false;
 
-  res.render('project', { title: project.title, project, categories });
+  res.render('project', {
+    title: project.title,
+    project,
+    categories,
+    isVolunteering: volunteering,
+  });
 };
 
 const showNewProjectForm = async (req, res) => {

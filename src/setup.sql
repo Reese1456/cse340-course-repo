@@ -173,3 +173,20 @@ CREATE TABLE users (
     role_id INTEGER REFERENCES roles (role_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ========================================
+-- Project/Volunteer Join Table
+-- ========================================
+-- A user can volunteer for many projects, and a project can have many
+-- volunteers, so this is a many-to-many relationship, modeled the same way as
+-- project_category above: a join table with a composite primary key so the
+-- same user cannot sign up for the same project twice.
+--
+-- ON DELETE CASCADE on both columns means removing a project or a user also
+-- cleans up their volunteer signups automatically.
+CREATE TABLE project_volunteer (
+    project_id INT NOT NULL REFERENCES project (project_id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+    volunteered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (project_id, user_id)
+);
